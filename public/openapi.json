@@ -2,7 +2,7 @@
 	"openapi": "3.0.3",
 	"info": {
 		"title": "TintAPI2",
-		"version": "1.0.0",
+		"version": "1.0.1",
 		"description": "This is the API documentation for TintAPI2, which is the backend for <a href='https://tintgenerator.vercel.app/'>Tint Generator<a/>.",
 		"contact": {
 			"email": "denniskats43@gmail.com"
