@@ -10,14 +10,13 @@ import (
 	"github.com/cjcodell1/tint/machine"
 )
 
-type Input struct {
+type TintSubmission struct {
 	Program string `json:"program"`
 	Tests   string `json:"tests"`
 	Verbose bool   `json:"verbose"`
 }
 
-type Result struct {
-	Status int    `json:"status"`
+type TintResult struct {
 	Output string `json:"output"`
 }
 
@@ -29,32 +28,36 @@ func WriteServerError(w http.ResponseWriter, err string) {
 	http.Error(w, err, http.StatusInternalServerError)
 }
 
-func DoDumbHTTPStuff(w http.ResponseWriter, r *http.Request) (Input, bool) {
-	var input Input
+func TryParseTintSubmission(w http.ResponseWriter, r *http.Request) (TintSubmission, bool) {
+	var submission TintSubmission
 
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
-		return input, false
+		return submission, false
+	}
+
+	if r.Method != "POST" {
+		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
+		return submission, false
 	}
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		WriteClientError(w, "Missing request body")
-		return input, false
+		return submission, false
 	}
 
-	err = json.Unmarshal(body, &input)
+	err = json.Unmarshal(body, &submission)
 	if err != nil {
-		WriteClientError(w, "Invalid input")
-		return input, false
+		WriteClientError(w, "Invalid submission")
+		return submission, false
 	}
 
-	return input, true
+	return submission, true
 }
 
 func SendOutputResponse(w http.ResponseWriter, output string) {
-	result := Result{
-		Status: 200,
+	result := TintResult{
 		Output: output,
 	}
 
@@ -91,7 +94,7 @@ func RunTests(mach machine.Machine, testsString string, verbose bool) string {
 		conf := mach.Start(test)
 		for {
 			if verbose {
-				outputBuilder.WriteString(conf.Print())
+				outputBuilder.WriteString(conf.Print() + "\n")
 			}
 
 			// check if accept or reject and break
@@ -106,7 +109,7 @@ func RunTests(mach machine.Machine, testsString string, verbose bool) string {
 			}
 
 			if stepCount > 500 {
-				outputBuilder.WriteString("Error: Program took too long or encountered an infinite loop.\n")
+				outputBuilder.WriteString("Error: This test took too long or encountered an infinite loop.\n")
 				outputBuilder.WriteString("Skipping this test.\n\n")
 				totalError += 1
 				break

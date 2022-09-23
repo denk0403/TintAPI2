@@ -10,26 +10,27 @@ import (
 	tm "github.com/cjcodell1/tint/machine/turing/ways/one"
 )
 
+// Schema for describing the behavior of a One-way Turing Machine.
 type oneTMSpec struct {
-	// These must be exported, yaml parser requires it.
 	Start       string
 	Accept      string
 	Reject      string
 	Transitions [][]string
 }
 
+// Handles "/api/one-way-tm" endpoint. Runs a One-way Turing Machine program on the given tests.
 func HandleOneWayTM(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var mach machine.Machine
 
-	input, shouldContinue := DoDumbHTTPStuff(w, r)
+	submission, shouldContinue := TryParseTintSubmission(w, r)
 	if !shouldContinue {
 		return
 	}
 
 	var spec oneTMSpec
 
-	err = yaml.Unmarshal([]byte(input.Program), &spec)
+	err = yaml.Unmarshal([]byte(submission.Program), &spec)
 	if err != nil {
 		WriteClientError(w, err.Error())
 		return
@@ -41,7 +42,7 @@ func HandleOneWayTM(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output := RunTests(mach, input.Tests, input.Verbose)
+	output := RunTests(mach, submission.Tests, submission.Verbose)
 
 	SendOutputResponse(w, output)
 }

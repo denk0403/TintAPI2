@@ -11,24 +11,24 @@ import (
 )
 
 type dfaSpec struct {
-	// These must be export, yaml parser requires it.
 	Start       string
 	Accepts     []string `yaml:"accept-states"` // renamed to accept-states
 	Transitions [][]string
 }
 
+// Handles "/api/dfa" endpoint. Runs a DFA program on the given tests.
 func HandleDFA(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var mach machine.Machine
 
-	input, shouldContinue := DoDumbHTTPStuff(w, r)
+	submission, shouldContinue := TryParseTintSubmission(w, r)
 	if !shouldContinue {
 		return
 	}
 
 	var spec dfaSpec
 
-	err = yaml.Unmarshal([]byte(input.Program), &spec)
+	err = yaml.Unmarshal([]byte(submission.Program), &spec)
 	if err != nil {
 		WriteClientError(w, err.Error())
 		return
@@ -40,7 +40,7 @@ func HandleDFA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output := RunTests(mach, input.Tests, input.Verbose)
+	output := RunTests(mach, submission.Tests, submission.Verbose)
 
 	SendOutputResponse(w, output)
 }

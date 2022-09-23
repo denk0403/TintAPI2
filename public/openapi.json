@@ -1,0 +1,140 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"title": "TintAPI2",
+		"version": "1.0.0",
+		"description": "This is the API documentation for TintAPI2, which is the backend for <a href='https://tintgenerator.vercel.app/'>Tint Generator<a/>.",
+		"contact": {
+			"email": "denniskats43@gmail.com"
+		}
+	},
+	"tags": [
+		{
+			"name": "Endpoints",
+			"description": "API endpoints"
+		}
+	],
+	"paths": {
+		"/api/one-way-tm": {
+			"post": {
+				"tags": ["Endpoints"],
+				"summary": "Runs a One-way Turing Machine",
+				"description": "Runs a One-way Turing Machine program on the given tests.",
+				"operationId": "run_one_way_turing_machine_api_one_way_tm_post",
+				"requestBody": {
+					"content": {
+						"application/json": { "schema": { "$ref": "#/components/schemas/TintSubmission" } }
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": { "schema": { "$ref": "#/components/schemas/TintOutput" } }
+						}
+					}
+				}
+			}
+		},
+		"/api/two-way-tm": {
+			"post": {
+				"tags": ["Endpoints"],
+				"summary": "Runs a Two-way Turing Machine",
+				"description": "Runs a Two-way Turing Machine program on the given tests.",
+				"operationId": "run_two_way_turing_machine_api_two_way_tm_post",
+				"requestBody": {
+					"content": {
+						"application/json": { "schema": { "$ref": "#/components/schemas/TintSubmission" } }
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": { "schema": { "$ref": "#/components/schemas/TintOutput" } }
+						}
+					}
+				}
+			}
+		},
+		"/api/dfa": {
+			"post": {
+				"tags": ["Endpoints"],
+				"summary": "Runs a DFA program",
+				"description": "Runs a DFA program on the given tests.",
+				"operationId": "run_dfa_api_dfa_post",
+				"requestBody": {
+					"content": {
+						"application/json": { "schema": { "$ref": "#/components/schemas/TintSubmission" } }
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": { "schema": { "$ref": "#/components/schemas/TintOutput" } }
+						}
+					}
+				}
+			}
+		},
+		"/api/start": {
+			"get": {
+				"tags": ["Endpoints"],
+				"deprecated": true,
+				"summary": "Awakes the API",
+				"description": "Awakes the API from idle to prepare to receive requests. This endpoint is deprecated because all handlers are now serverless functions.",
+				"operationId": "confirmAwake_api_start_get",
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"application/json": { "schema": { "$ref": "#/components/schemas/StartOutput" } }
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"StartOutput": {
+				"deprecated": true,
+				"title": "StartOutput",
+				"required": ["status"],
+				"type": "object",
+				"properties": { "status": { "title": "Status", "type": "integer" } },
+				"example": { "status": 200 }
+			},
+			"TintOutput": {
+				"title": "TintOutput",
+				"required": ["output"],
+				"type": "object",
+				"properties": {
+					"output": { "title": "Output", "type": "string" }
+				},
+				"example": {
+					"output": "Simulating with \"a b\".\nstart: a b _\n      ^\nq1: _ b _\n     ^\naccept: _ _ _\n           ^\nAccepted.\n\n1 accepted.\n0 rejected.\n0 errors.\n"
+				}
+			},
+			"TintSubmission": {
+				"title": "TintSubmission",
+				"required": ["program", "tests"],
+				"type": "object",
+				"properties": {
+					"program": { "title": "Program", "type": "string" },
+					"tests": { "title": "Tests", "type": "string" },
+					"verbose": { "title": "Verbose", "type": "boolean" }
+				},
+				"example": {
+					"program": "start: start \naccept: accept \nreject: reject \n\ntransitions:\n- [start, a, q1, _, R]\n- [start, _, reject, _, R]\n- [q1, a, accept, _, R]\n- [q1, _, reject, _, R]",
+					"tests": "a b\n",
+					"verbose": true
+				}
+			}
+		}
+	}
+}
