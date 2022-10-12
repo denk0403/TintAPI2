@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/cjcodell1/tint/machine"
-	tm "github.com/cjcodell1/tint/machine/turing/ways/one"
+	tm "github.com/cjcodell1/tint/machine/turing/ways/two"
 )
 
 // Schema for describing the behavior of a Two-way Turing Machine.
