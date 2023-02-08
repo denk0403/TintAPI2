@@ -2,7 +2,7 @@
 	"openapi": "3.0.3",
 	"info": {
 		"title": "TintAPI2",
-		"version": "1.0.1",
+		"version": "1.1",
 		"description": "This is the API documentation for TintAPI2, which is the backend for <a href='https://tintgenerator.vercel.app/'>Tint Generator<a/>.",
 		"contact": {
 			"email": "denniskats43@gmail.com"
@@ -18,7 +18,7 @@
 		"/api/one-way-tm": {
 			"post": {
 				"tags": ["Endpoints"],
-				"summary": "Runs a One-way Turing Machine",
+				"summary": "Runs a One-way Turing Machine.",
 				"description": "Runs a One-way Turing Machine program on the given tests.",
 				"operationId": "run_one_way_turing_machine_api_one_way_tm_post",
 				"requestBody": {
@@ -40,7 +40,7 @@
 		"/api/two-way-tm": {
 			"post": {
 				"tags": ["Endpoints"],
-				"summary": "Runs a Two-way Turing Machine",
+				"summary": "Runs a Two-way Turing Machine.",
 				"description": "Runs a Two-way Turing Machine program on the given tests.",
 				"operationId": "run_two_way_turing_machine_api_two_way_tm_post",
 				"requestBody": {
@@ -62,7 +62,7 @@
 		"/api/dfa": {
 			"post": {
 				"tags": ["Endpoints"],
-				"summary": "Runs a DFA program",
+				"summary": "Runs a DFA program.",
 				"description": "Runs a DFA program on the given tests.",
 				"operationId": "run_dfa_api_dfa_post",
 				"requestBody": {
@@ -76,6 +76,60 @@
 						"description": "Successful Response",
 						"content": {
 							"application/json": { "schema": { "$ref": "#/components/schemas/TintOutput" } }
+						}
+					}
+				}
+			}
+		},
+		"/api/render-dot": {
+			"post": {
+				"tags": ["Endpoints"],
+				"summary": "Renders a graph from DOT syntax.",
+				"description": "Renders a graph from DOT syntax. The layout engine and format type can be specified via query parameters, however they default to 'sfdp' and 'svg', respectively. You can access a playground at <a href='https://tint-api2.vercel.app/dot'>https://tint-api2.vercel.app/dot</a>.",
+				"operationId": "run_render_dot_api_render_dot_post",
+				"parameters": [
+					{
+						"name": "layout",
+						"in": "query",
+						"description": "Sets the layout engine to use.",
+						"schema": {
+							"type": "string",
+							"default": "sfdp",
+							"enum": ["circo", "dot", "fdp", "neato", "osage", "patchwork", "sfdp", "twopi"]
+						}
+					},
+					{
+						"name": "format",
+						"in": "query",
+						"description": "Sets the format to output.",
+						"schema": {
+							"type": "string",
+							"default": "svg",
+							"enum": ["dot", "svg", "png", "jpg"]
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"text/plain": {
+							"schema": { "type": "string" },
+							"example": "graph test {\n    a -- b [label=3]\n    b -- c [label=10]\n    c -- d [label=2]\n    d -- a [label=4]\n}"
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "Successful Response",
+						"content": {
+							"text/xml": {
+								"schema": {
+									"type": "string",
+									"contentMediaType": "text/xml"
+								}
+							},
+							"image/png": {},
+							"image/jpg": {}
 						}
 					}
 				}
