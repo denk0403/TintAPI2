@@ -23,7 +23,7 @@
 				"operationId": "run_one_way_turing_machine_api_one_way_tm_post",
 				"requestBody": {
 					"content": {
-						"application/json": { "schema": { "$ref": "#/components/schemas/TintSubmission" } }
+						"application/json": { "schema": { "$ref": "#/components/schemas/TintTMSubmission" } }
 					},
 					"required": true
 				},
@@ -31,7 +31,7 @@
 					"200": {
 						"description": "Successful Response",
 						"content": {
-							"application/json": { "schema": { "$ref": "#/components/schemas/TintOutput" } }
+							"application/json": { "schema": { "$ref": "#/components/schemas/TintTMOutput" } }
 						}
 					}
 				}
@@ -45,7 +45,7 @@
 				"operationId": "run_two_way_turing_machine_api_two_way_tm_post",
 				"requestBody": {
 					"content": {
-						"application/json": { "schema": { "$ref": "#/components/schemas/TintSubmission" } }
+						"application/json": { "schema": { "$ref": "#/components/schemas/TintTMSubmission" } }
 					},
 					"required": true
 				},
@@ -53,7 +53,7 @@
 					"200": {
 						"description": "Successful Response",
 						"content": {
-							"application/json": { "schema": { "$ref": "#/components/schemas/TintOutput" } }
+							"application/json": { "schema": { "$ref": "#/components/schemas/TintTMOutput" } }
 						}
 					}
 				}
@@ -67,7 +67,7 @@
 				"operationId": "run_dfa_api_dfa_post",
 				"requestBody": {
 					"content": {
-						"application/json": { "schema": { "$ref": "#/components/schemas/TintSubmission" } }
+						"application/json": { "schema": { "$ref": "#/components/schemas/TintDFASubmission" } }
 					},
 					"required": true
 				},
@@ -75,7 +75,7 @@
 					"200": {
 						"description": "Successful Response",
 						"content": {
-							"application/json": { "schema": { "$ref": "#/components/schemas/TintOutput" } }
+							"application/json": { "schema": { "$ref": "#/components/schemas/TintDFAOutput" } }
 						}
 					}
 				}
@@ -85,7 +85,7 @@
 			"post": {
 				"tags": ["Endpoints"],
 				"summary": "Renders a graph from DOT syntax.",
-				"description": "Renders a graph from DOT syntax. The layout engine and format type can be specified via query parameters, however they default to 'sfdp' and 'svg', respectively. You can access a playground at <a href='https://tint-api2.vercel.app/dot'>https://tint-api2.vercel.app/dot</a>.",
+				"description": "Renders a graph from DOT syntax. The layout engine and format type can be specified via query parameters, however they default to 'sfdp' and 'svg', respectively. You can access a playground <a href='/dot'>here</a>.",
 				"operationId": "run_render_dot_api_render_dot_post",
 				"parameters": [
 					{
@@ -163,8 +163,8 @@
 				"properties": { "status": { "title": "Status", "type": "integer" } },
 				"example": { "status": 200 }
 			},
-			"TintOutput": {
-				"title": "TintOutput",
+			"TintTMOutput": {
+				"title": "TintTMOutput",
 				"required": ["output"],
 				"type": "object",
 				"properties": {
@@ -174,8 +174,8 @@
 					"output": "Simulating with \"a b\".\nstart: a b _\n      ^\nq1: _ b _\n     ^\naccept: _ _ _\n           ^\nAccepted.\n\n1 accepted.\n0 rejected.\n0 errors.\n"
 				}
 			},
-			"TintSubmission": {
-				"title": "TintSubmission",
+			"TintTMSubmission": {
+				"title": "TintTMSubmission",
 				"required": ["program", "tests"],
 				"type": "object",
 				"properties": {
@@ -185,7 +185,33 @@
 				},
 				"example": {
 					"program": "start: start \naccept: accept \nreject: reject \n\ntransitions:\n- [start, a, q1, _, R]\n- [start, _, reject, _, R]\n- [q1, a, accept, _, R]\n- [q1, _, reject, _, R]",
-					"tests": "a b\n",
+					"tests": "a a a\n",
+					"verbose": true
+				}
+			},
+			"TintDFAOutput": {
+				"title": "TintDFAOutput",
+				"required": ["output"],
+				"type": "object",
+				"properties": {
+					"output": { "title": "Output", "type": "string" }
+				},
+				"example": {
+					"output": "Simulating with \"0 1 0 1 1\".\na: 0 1 0 1 1\nb: 1 0 1 1\na: 0 1 1\nb: 1 1\na: 1\na: \nRejected.\n\n0 accepted.\n1 rejected.\n0 errors."
+				}
+			},
+			"TintDFASubmission": {
+				"title": "TintDFASubmission",
+				"required": ["program", "tests"],
+				"type": "object",
+				"properties": {
+					"program": { "title": "Program", "type": "string" },
+					"tests": { "title": "Tests", "type": "string" },
+					"verbose": { "title": "Verbose", "type": "boolean" }
+				},
+				"example": {
+					"program": "start: a\n\naccept-states: [b]\n\ntransitions:\n- [a, 0, b]\n- [a, 1, a]\n- [b, 0, b]\n- [b, 1, a]",
+					"tests": "0 1 1 0\n",
 					"verbose": true
 				}
 			}

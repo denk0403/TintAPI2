@@ -21,18 +21,20 @@
             const url = `/api/render-dot?layout=${layout}&format=${format}`;
 
             const loading = document.getElementById("loading");
+            /** @type {HTMLIFrameElement} */
+            const iframe = document.getElementById("result");
             loading.hidden = false;
 
             fetch(url, { body: dot, method: "POST", })
                 .then((res) => res.blob())
-                .then((blob) => location.assign(URL.createObjectURL(blob)))
+                .then((blob) => { iframe.src = URL.createObjectURL(blob) })
                 .finally(() => { loading.hidden = true; });
         }
     </script>
     <style>
-        form * {
-            font-size: larger;
+        * {
             box-sizing: border-box;
+            font-size: large;
         }
 
         select {
@@ -46,11 +48,19 @@
             min-height: 250px;
             padding: 5px;
             resize: vertical;
+            border: 1px solid black;
+            border-radius: 5px;
         }
 
         button {
             width: 500px;
             height: 50px;
+        }
+
+        iframe {
+            padding: 5px;
+            border: 1px solid black;
+            border-radius: 5px;
         }
 
         .loading-ring:not([hidden]) {
@@ -79,27 +89,37 @@
 </head>
 
 <body>
-    <form onsubmit="handleOnSubmit(event)">
-        <select name="layout">
-            <option selected value="sfdp">sfdp</option>
-            <option value="dot">dot</option>
-            <option value="circo">circo</option>
-            <option value="fdp">fdp</option>
-            <option value="neato">neato</option>
-            <option value="osage">osage</option>
-            <option value="patchwork">patchwork</option>
-            <option value="twopi">twopi</option>
-        </select>
-        <select name="format">
-            <option selected value="svg">SVG</option>
-            <option value="png">PNG</option>
-            <option value="jpg">JPG</option>
-        </select>
-        <br><br>
-        <textarea name="dot" placeholder="graph test { }">graph test { a -- b }</textarea>
-        <br><br>
-        <button>Submit <div id="loading" class="loading-ring" hidden></div></button>
-    </form>
+    <a href="/">Go to Docs</a><br><br>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <form onsubmit="handleOnSubmit(event)">
+            <select name="layout">
+                <option selected value="sfdp">sfdp</option>
+                <option value="dot">dot</option>
+                <option value="circo">circo</option>
+                <option value="fdp">fdp</option>
+                <option value="neato">neato</option>
+                <option value="osage">osage</option>
+                <option value="patchwork">patchwork</option>
+                <option value="twopi">twopi</option>
+            </select>
+            <select name="format">
+                <option selected value="svg">SVG</option>
+                <option value="png">PNG</option>
+                <option value="jpg">JPG</option>
+            </select>
+            <br><br>
+            <textarea name="dot" placeholder="graph test { }">graph test { a -- b }</textarea>
+            <br><br>
+            <button>Submit <div id="loading" class="loading-ring" hidden></div></button>
+        </form>
+        <div>
+            <h2 style="margin: 18px 0 19px;">Result:</h2>
+            <iframe id="result" width="500" height="400" lang="en-US" frameborder="0"></iframe>
+            <br><br>
+            <button onclick="result.src && window.open(result.src, '_blank')">Open in new tab</button>
+        </div>
+    </div>
+
 </body>
 
 </html>

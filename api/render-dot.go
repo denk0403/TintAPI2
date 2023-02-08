@@ -79,5 +79,19 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var contentType string
+	switch format {
+	case graphviz.SVG:
+		contentType = "text/xml"
+	case graphviz.PNG:
+		contentType = "image/png"
+	case graphviz.JPG:
+		contentType = "image/jpg"
+	default:
+		contentType = "text/plain"
+	}
+
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Language", "en-US")
 	w.Write(buf.Bytes())
 }
