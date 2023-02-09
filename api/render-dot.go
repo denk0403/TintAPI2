@@ -10,8 +10,10 @@ import (
 	"github.com/goccy/go-graphviz"
 )
 
-const MAX_NODES = 250
-const MAX_EDGES = MAX_NODES * (MAX_NODES - 1) / 2
+const (
+	MAX_NODES = 250
+	MAX_EDGES = MAX_NODES * (MAX_NODES - 1) / 2
+)
 
 // Handles "/api/render-dot" endpoint. Generates a state diagram from DOT syntax.
 func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
