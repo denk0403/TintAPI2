@@ -21,13 +21,22 @@
             const url = `/api/render-dot?layout=${layout}&format=${format}`;
 
             const loading = document.getElementById("loading");
+            const responseTime = document.getElementById("response-time");
             /** @type {HTMLIFrameElement} */
             const iframe = document.getElementById("result");
             loading.hidden = false;
 
             fetch(url, { body: dot, method: "POST", })
                 .then((res) => res.blob())
-                .then((blob) => { iframe.src = URL.createObjectURL(blob) })
+                .then((blob) => {
+                    iframe.src = URL.createObjectURL(blob);
+                    responseTime.textContent = new Date().toLocaleString();
+                })
+                .catch((reason) => {
+                    console.error(reason);
+                    iframe.src = 'about:blank';
+                    responseTime.textContent = "";
+                })
                 .finally(() => { loading.hidden = true; });
         }
     </script>
@@ -61,6 +70,7 @@
             padding: 5px;
             border: 1px solid black;
             border-radius: 5px;
+            resize: both;
         }
 
         .loading-ring:not([hidden]) {
@@ -113,7 +123,7 @@
             <button>Submit <div id="loading" class="loading-ring" hidden></div></button>
         </form>
         <div>
-            <h2 style="margin: 18px 0 19px;">Result:</h2>
+            <h2 style="margin: 18px 0 19px;">Result: <span id="response-time"></span></h2>
             <iframe id="result" width="500" height="400" lang="en-US" frameborder="0"></iframe>
             <br><br>
             <button onclick="result.src && window.open(result.src, '_blank')">Open in new tab</button>
