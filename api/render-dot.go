@@ -48,7 +48,9 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body_bytes, read_err := io.ReadAll(r.Body)
+	r.Close = true
 	if read_err != nil {
+		w.Header().Set("debug_body", string(body_bytes))
 		WriteClientError(w, read_err.Error())
 		read_err = nil
 		return
