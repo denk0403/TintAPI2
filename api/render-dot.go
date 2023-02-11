@@ -18,7 +18,6 @@ const (
 // Handles "/api/render-dot" endpoint. Generates a state diagram from DOT syntax.
 func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 	var (
-		err    error
 		layout graphviz.Layout
 		format graphviz.Format
 	)
@@ -48,16 +47,16 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body_bytes, err := io.ReadAll(r.Body)
+	body_bytes, read_err := io.ReadAll(r.Body)
 
-	if err != nil {
-		WriteClientError(w, err.Error())
+	if read_err != nil {
+		WriteClientError(w, read_err.Error())
 		return
 	}
 
-	graph, err := graphviz.ParseBytes(body_bytes)
-	if err != nil {
-		WriteClientError(w, err.Error())
+	graph, parse_err := graphviz.ParseBytes(body_bytes)
+	if parse_err != nil {
+		WriteClientError(w, parse_err.Error())
 		return
 	}
 
@@ -74,10 +73,10 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var buf bytes.Buffer
-	err = graphviz.New().SetLayout(layout).Render(graph, format, &buf)
+	render_err := graphviz.New().SetLayout(layout).Render(graph, format, &buf)
 
-	if err != nil {
-		WriteClientError(w, err.Error())
+	if render_err != nil {
+		WriteClientError(w, render_err.Error())
 		return
 	}
 
