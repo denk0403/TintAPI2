@@ -37,11 +37,13 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 		format = graphviz.Format(format_str)
 	}
 
+	w.Header().Set("debug_body_1", "1")
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
+	w.Header().Set("debug_body_2", "2")
 	if r.Method != "POST" {
 		http.Error(w, "Invalid HTTP method", http.StatusMethodNotAllowed)
 		return
@@ -49,6 +51,7 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 
 	body_bytes, read_err := io.ReadAll(r.Body)
 	r.Close = true
+	w.Header().Set("debug_body_3", "3")
 	if read_err != nil {
 		w.Header().Set("debug_body", string(body_bytes))
 		WriteClientError(w, read_err.Error())
@@ -56,6 +59,7 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("debug_body_4", "4")
 	graph, parse_err := graphviz.ParseBytes(body_bytes)
 	body_bytes = nil
 	if parse_err != nil {
