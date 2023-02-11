@@ -48,15 +48,17 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body_bytes, read_err := io.ReadAll(r.Body)
-
 	if read_err != nil {
 		WriteClientError(w, read_err.Error())
+		read_err = nil
 		return
 	}
 
 	graph, parse_err := graphviz.ParseBytes(body_bytes)
+	body_bytes = nil
 	if parse_err != nil {
 		WriteClientError(w, parse_err.Error())
+		parse_err = nil
 		return
 	}
 
@@ -74,9 +76,10 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 
 	var buf bytes.Buffer
 	render_err := graphviz.New().SetLayout(layout).Render(graph, format, &buf)
-
+	graph = nil
 	if render_err != nil {
 		WriteClientError(w, render_err.Error())
+		render_err = nil
 		return
 	}
 
