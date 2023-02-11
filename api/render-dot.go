@@ -53,20 +53,24 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 	r.Close = true
 	w.Header().Set("debug_body_3", "3")
 	if read_err != nil {
-		w.Header().Set("debug_body", string(body_bytes))
 		WriteClientError(w, read_err.Error())
 		read_err = nil
 		return
 	}
 
+	w.Header().Set("debug_body_bytes", string(body_bytes))
 	w.Header().Set("debug_body_4", "4")
 	graph, parse_err := graphviz.ParseBytes(body_bytes)
+	w.Header().Set("debug_body_5", "5")
 	body_bytes = nil
 	if parse_err != nil {
+		w.Header().Set("debug_body_parse_err", "parse_err")
+		w.Header().Set("debug_body_err_str", parse_err.Error())
 		WriteClientError(w, parse_err.Error())
 		parse_err = nil
 		return
 	}
+	w.Header().Set("debug_body_6", "6")
 
 	node_count, edge_count := graph.NumberNodes(), graph.NumberEdges()
 	if node_count > MAX_NODES {
