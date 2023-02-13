@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dot Visualizer</title>
+    <script>
+        /** @param {SubmitEvent} event */
+        function handleOnSubmit(event) {
+            event.preventDefault();
+
+            /** @type {HTMLFormElement} */
+            const form = event.target;
+            const formData = new FormData(form);
+            const layout = formData.get("layout") ?? "sfdp";
+            const format = formData.get("format") ?? "svg";
+            const dot = formData.get("dot");
+
+            const url = `/api/render-dot?layout=${layout}&format=${format}`;
+
+            const loading = document.getElementById("loading");
+            const responseTime = document.getElementById("response-time");
+            /** @type {HTMLIFrameElement} */
+            const iframe = document.getElementById("result");
+            loading.hidden = false;
+
+            fetch(url, { body: dot, method: "POST", })
+                .then((res) => res.blob())
+                .then((blob) => {
+                    iframe.src = URL.createObjectURL(blob);
+                    responseTime.textContent = new Date().toLocaleString();
+                })
+                .catch((reason) => {
+                    console.error(reason);
+                    iframe.src = 'about:blank';
+                    responseTime.textContent = "";
+                })
+                .finally(() => { loading.hidden = true; });
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-size: large;
+        }
+
+        select {
+            width: 250px;
+            padding: 5px;
+        }
+
+        textarea {
+            width: 500px;
+            height: 400px;
+            min-height: 250px;
+            padding: 5px;
+            resize: vertical;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+
+        button {
+            display: block;
+            width: 500px;
+            height: 50px;
+            margin: 5px 0;
+        }
+
+        iframe {
+            padding: 5px;
+            border: 1px solid black;
+            border-radius: 5px;
+            resize: both;
+        }
+
+        .loading-ring:not([hidden]) {
+            --color: #0000ff;
+            display: inline-block;
+            vertical-align: middle;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin-left: 4px;
+            border: 3px solid var(--color);
+            border-color: var(--color) transparent var(--color) transparent;
+            animation: loading-ring 1.2s linear infinite;
+        }
+
+        @keyframes loading-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Go to Docs</a><br><br>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <form id="form" onsubmit="handleOnSubmit(event)">
+            <select name="layout">
+                <option selected value="sfdp">sfdp</option>
+                <option value="dot">dot</option>
+                <option value="circo">circo</option>
+                <option value="fdp">fdp</option>
+                <option value="neato">neato</option>
+                <option value="osage">osage</option>
+                <option value="patchwork">patchwork</option>
+                <option value="twopi">twopi</option>
+            </select>
+            <select name="format">
+                <option selected value="svg">SVG</option>
+                <option value="png">PNG</option>
+                <option value="jpg">JPG</option>
+            </select>
+            <br><br>
+            <textarea name="dot" oninput="localStorage.setItem('dot', event.currentTarget.value)"
+                placeholder="graph test { ... }">graph test { a -- b }</textarea>
+            <script>
+                form.dot.value = localStorage.getItem("dot")
+            </script>
+            <br><br>
+            <button>Submit <div id="loading" class="loading-ring" hidden></div></button>
+            <button type="reset">Reset</button>
+        </form>
+        <div>
+            <h2 style="margin: 18px 0 19px;">Result: <span id="response-time"></span></h2>
+            <iframe id="result" width="500" height="400" lang="en-US" frameborder="0" onload="return false;"></iframe>
+            <br><br>
+            <button onclick="result.src && window.open(result.src, '_blank')">Open in new tab</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
