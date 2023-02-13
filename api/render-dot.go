@@ -1,10 +1,9 @@
 package handler
 
 import (
-	"bytes"
-	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	. "github.com/denk0403/TintAPI2/utils"
 	"github.com/goccy/go-graphviz"
@@ -50,62 +49,59 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body_bytes, read_err := io.ReadAll(r.Body)
-	r.Close = true
 	w.Header().Set("debug_body_3", "3")
 	if read_err != nil {
 		WriteClientError(w, read_err.Error())
-		read_err = nil
 		return
 	}
 
 	w.Header().Set("debug_body_bytes", string(body_bytes))
-	w.Header().Set("debug_body_4", "4")
-	graph, parse_err := graphviz.ParseBytes(body_bytes)
-	w.Header().Set("debug_body_5", "5")
-	body_bytes = nil
+	// graph, parse_err := graphviz.ParseBytes(body_bytes)
+	graph, parse_err := ccall.Agmemread(string(body_bytes))
+
+	w.Header().Set("debug_graph_is_nil", strconv.FormatBool(graph == nil))
+	w.Header().Set("debug_parse_err_is_nil", strconv.FormatBool(parse_err == nil))
+
 	if parse_err != nil {
-		w.Header().Set("debug_body_parse_err", "parse_err")
 		w.Header().Set("debug_body_err_str", parse_err.Error())
 		WriteClientError(w, parse_err.Error())
-		parse_err = nil
 		return
 	}
 	w.Header().Set("debug_body_6", "6")
+	w.Write([]byte("hello world"))
 
-	node_count, edge_count := graph.NumberNodes(), graph.NumberEdges()
-	if node_count > MAX_NODES {
-		err_msg := fmt.Sprintf("Too many nodes. A max of %d nodes are allowed. Received %d.", MAX_NODES, node_count)
-		WriteClientError(w, err_msg)
-		return
-	}
-	if edge_count > MAX_EDGES {
-		err_msg := fmt.Sprintf("Too many edges. A max of %d edges are allowed. Received %d.", MAX_EDGES, edge_count)
-		WriteClientError(w, err_msg)
-		return
-	}
+	// node_count, edge_count := graph.NumberNodes(), graph.NumberEdges()
+	// if node_count > MAX_NODES {
+	// 	err_msg := fmt.Sprintf("Too many nodes. A max of %d nodes are allowed. Received %d.", MAX_NODES, node_count)
+	// 	WriteClientError(w, err_msg)
+	// 	return
+	// }
+	// if edge_count > MAX_EDGES {
+	// 	err_msg := fmt.Sprintf("Too many edges. A max of %d edges are allowed. Received %d.", MAX_EDGES, edge_count)
+	// 	WriteClientError(w, err_msg)
+	// 	return
+	// }
 
-	var buf bytes.Buffer
-	render_err := graphviz.New().SetLayout(layout).Render(graph, format, &buf)
-	graph = nil
-	if render_err != nil {
-		WriteClientError(w, render_err.Error())
-		render_err = nil
-		return
-	}
+	// var buf bytes.Buffer
+	// render_err := graphviz.New().SetLayout(layout).Render(graph, format, &buf)
+	// if render_err != nil {
+	// 	WriteClientError(w, render_err.Error())
+	// 	return
+	// }
 
-	var contentType string
-	switch format {
-	case graphviz.SVG:
-		contentType = "text/xml"
-	case graphviz.PNG:
-		contentType = "image/png"
-	case graphviz.JPG:
-		contentType = "image/jpg"
-	default:
-		contentType = "text/plain"
-	}
+	// var contentType string
+	// switch format {
+	// case graphviz.SVG:
+	// 	contentType = "text/xml"
+	// case graphviz.PNG:
+	// 	contentType = "image/png"
+	// case graphviz.JPG:
+	// 	contentType = "image/jpg"
+	// default:
+	// 	contentType = "text/plain"
+	// }
 
-	w.Header().Set("Content-Type", contentType)
-	w.Header().Set("Content-Language", "en-US")
-	w.Write(buf.Bytes())
+	// w.Header().Set("Content-Type", contentType)
+	// w.Header().Set("Content-Language", "en-US")
+	// w.Write(buf.Bytes())
 }
