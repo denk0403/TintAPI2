@@ -3,8 +3,10 @@
 	"info": {
 		"title": "TintAPI2",
 		"version": "1.1",
-		"description": "This is the API documentation for TintAPI2, which is the backend for <a href='https://tintgenerator.vercel.app/'>Tint Generator<a/>.",
+		"description": "This is the API documentation for TintAPI2, which is the backend for <a href='https://tintgenerator.vercel.app/'>Tint Generator</a>. The repository for this API can be found on <a href='https://github.com/denk0403/TintAPI2'>GitHub</a>.",
 		"contact": {
+			"name": "Dennis Kats",
+			"url": "https://denniskats.dev/",
 			"email": "denniskats43@gmail.com"
 		}
 	},
