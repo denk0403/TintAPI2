@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	. "github.com/denk0403/TintAPI2/utils"
-	"github.com/goccy/go-graphviz"
+	"github.com/denk0403/go-graphviz"
 )
 
 const (
@@ -59,6 +59,12 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	gviz := graphviz.New()
+	defer func() {
+		graph.Close()
+		gviz.Close()
+	}()
+
 	node_count, edge_count := graph.NumberNodes(), graph.NumberEdges()
 	if node_count > MAX_NODES {
 		err_msg := fmt.Sprintf("Too many nodes. A max of %d nodes are allowed. Received %d.", MAX_NODES, node_count)
@@ -72,7 +78,7 @@ func HandleRenderDot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var buf bytes.Buffer
-	render_err := graphviz.New().SetLayout(layout).Render(graph, format, &buf)
+	render_err := gviz.SetLayout(layout).Render(graph, format, &buf)
 	if render_err != nil {
 		WriteClientError(w, render_err.Error())
 		return

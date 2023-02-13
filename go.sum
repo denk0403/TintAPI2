@@ -1,6 +1,8 @@
 github.com/cjcodell1/tint v0.0.0-20200604191417-b63be41b2b0d h1:4K4PSoncPJ1NAFbJB9mrLB2RKTc/B17UzHNCUsvmSL0=
 github.com/cjcodell1/tint v0.0.0-20200604191417-b63be41b2b0d/go.mod h1:WyvCD9I99EZdKsx/WCcyWZc6iOEorPM9dx0/Vf+55uU=
 github.com/corona10/goimagehash v1.0.2/go.mod h1:/l9umBhvcHQXVtQO1V6Gp1yD20STawkhRnnX0D1bvVI=
+github.com/denk0403/go-graphviz v0.1.1 h1:3CxqETzpLNS3P065T/X4fYYmy/c7zd231Y5WzzZIBQo=
+github.com/denk0403/go-graphviz v0.1.1/go.mod h1:PVjxweB8nApIsJO+HJ00At7w1D0Q+tvCXfOEfUW/C9E=
 github.com/fogleman/gg v1.3.0 h1:/7zJX8F6AaYQc57WQCyN9cAIz+4bCJGO9B+dyW29am8=
 github.com/fogleman/gg v1.3.0/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/goccy/go-graphviz v0.0.9 h1:s/FMMJ1Joj6La3S5ApO3Jk2cwM4LpXECC2muFx3IPQQ=
